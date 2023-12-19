@@ -1,47 +1,156 @@
 # Banking
-# List of Employees
 
 Table of Contents
 1. [Overview](#overview)
 2. [Class](#class)
-   * [Account](#account)
-   * [Checking](#checking)
-   * [Saving](#saving)
-2. [Transctions](#class)
-   * [Checking](#employee_attributes)
-   * [Saving](#employee_class)
+   * [Account Class](#account)
+   * [Checking Class](#checking)
+   * [Saving Class](#saving)
+3. [Static Functions](#static_functions)
+   * [Static Functions in Account](#static_functions_in_account)
+   * [Static Functions in Checking](#static_functions_in_checking)
+   * [Static Functions in Saving](#static_functions_in_saving)   
+4. [Virtual Functions](#vitual_functions)
+   * [Account](#vitual_functions_in_account)
+   * [Checking](#vitual_functions_in_checking)
+   * [Saving](#vitual_functions_in_saving)
 4. [Summary](#summary)
 
 ## Overview
 
 This program create a superclass *Account* and subclass *Checking* and *Saving* to allow customer to create *Checking* and *Saving* account with a unique ID. *Checking* and *Saving* account can do transctions independently and interactively. Transctions includes withdraw, deposit, settle interest, check balance, and transfer between accounts. *Checking* and *Saving* account both have their own restrictions.
 
-Some of member functions are inheritance and virtual functions.
+
+## Class
+### Account
+![9_2.png](https://github.com/CelineWW/Banking_in_CPP/blob/main/PA13_banking_Run/9_2.png)
+
 - Five general types of banking transactions for both accounts, Checking and Savings: 
     - withdraw
     - deposit
     - calculate interest 
     - balance
     - transfer funds (between the two accounts, from Checking to Savings and vice versa).
-- Savings restrictions:
-    - Become inactive if the balance falls less than $25, and under such a situation, no more withdrawals may be allowed.
-    - A $1 charge for each transfer fund (to the Checking account), but not for the first transfer, which is free.
-    - The monthly interest rate is 3.75% based on the current balance, no new interest if not modified.
+
+```
+class Account {
+protected:
+    string name;
+    string title;
+    string ssn;
+private:
+    int customer_id;
+public:
+    double balance;
+    double interest_rate;
+    double divident;
+    Account (int customer_id = 0, string name = "", string title = "", string ssn = "", double balance = 0, double interest_rate = 0, double divident = 0);
+    < -------- member functions here ------>
+};
+```
+### Checking
+![9_3.png](https://github.com/CelineWW/Banking_in_CPP/blob/main/PA13_banking_Run/9_3.png)
 -   Checking restrictions:
     -   A monthly service charge is $5 (automatically charged when the Checking
     account was opened).
     -   10 cents are charged for each written check, but not for the first check, which is free. A $15 charge for each bounced check (not enough funds).
     - The monthly interest rate is 2.5% based on the current balance, no new interest if not modified.
 
-## Class
-### Account
-### Checking
+```
+class Checking : public Account {
+private:
+    int check_count;
+    int check_bounced;
+public:
+    // Checking constructor
+    Checking(int customer_id = 0, string name = "", string title = "", string ssn = "", double balance = 0, double interest_rate = 0.025, double divident = 0, int check_count_param = 0, int check_bounced_param = 0) :
+        Account(customer_id, name, title, ssn, balance, interest_rate, divident){
+            check_count = check_count_param; check_bounced = check_bounced_param;
+    }
+    < -------- member functions here ------>
+};
+```
 ### Saving
+![9_4.png](https://github.com/CelineWW/Banking_in_CPP/blob/main/PA13_banking_Run/9_4.png)
+- Savings restrictions:
+    - Become inactive if the balance falls less than $25, and under such a situation, no more withdrawals may be allowed.
+    - A $1 charge for each transfer fund (to the Checking account), but not for the first transfer, which is free.
+    - The monthly interest rate is 3.75% based on the current balance, no new interest if not modified.
+
+```
+class Savings : public Account {
+private:
+    int transfer_count;
+    
+public:
+    // Savings constructor
+    Savings(int customer_id = 0, string name = "", string title = "", string ssn = "", double balance = 0, double interest_rate = 0.0375, double divident = 0, int transfer_count_param = 0) :
+        Account(customer_id, name, title, ssn, balance, interest_rate, divident){
+        transfer_count = transfer_count_param;
+    }
+    < -------- member functions here ------>
+};
+```
 
 
-## Transctions
-### Checking
-### Saving
+## Static Functions
+### Static Functions in Account 
+-   static void display_menu();
+-   static void display_activity_menu();
+### Static Functions in Checking
+-   static void display_activity_menu();
+### Static Functions in Saving
+-   static void display_activity_menu();
+```   
+   static void display_activity_menu() {
+        cout << endl << endl;
+        cout << "---------------------------------------------------------------------------\n\n";
+        cout << "                            *** Savings ***                                \n";
+        Account::display_activity_menu();
+    }
+```
+
+## Virtual Functions
+Some of member functions are inheritance and virtual functions.
+### Virtual Functions in Account 
+-   virtual string get_description() const;
+-   virtual void withdraw(double);
+-   virtual void deposit(double);
+
+### Virtual Functions in Checking
+-   string get_description() const override{...}
+```
+    string Account::get_description() const {
+        return "\n>ID: " + to_string(customer_id) + "\n>Name: " + name +
+        + "\n>Title: " + title + "\n>SSN: " + ssn + "\nBalance: " + to_string(balance) + "\nDivident: " + to_string(divident);
+    }
+```
+-   void withdraw(double withdraw_amount) override{...}
+-   void deposit(double deposit_amount) override {...}
+
+```
+    string get_description() const override{
+        return  "\n>Checking Status" + Account::get_description() + "\nChecks written: " + to_string(check_count) + "\nCheck Bounced: " + to_string(check_bounced) ;
+    };
+```
+### Virtual Functions in Saving
+-   void withdraw(double withdraw_amount) override {...}
+```
+    void withdraw(double withdraw_amount) override {
+        if (balance > 25.00 && balance >= withdraw_amount){
+            balance -= withdraw_amount;
+            cout << "Deducted successfully from Savings!\n";
+            cout << "Savings balance: $" << balance << endl;
+        }
+        else if (balance > 25.00 && balance < withdraw_amount){
+            cout << "An error occured: low balance.\n";
+        }
+        else
+            cout<< "An error occured: the account is inactive.\n";
+    }
+```
+-   void deposit(double deposit_amount) override {...}
+
 
 
 
