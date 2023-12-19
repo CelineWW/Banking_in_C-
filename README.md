@@ -10,11 +10,14 @@ Table of Contents
    * [Static Functions in Account](#static_functions_in_account)
    * [Static Functions in Checking](#static_functions_in_checking)
    * [Static Functions in Saving](#static_functions_in_saving)   
-4. [Virtual Functions](#vitual_functions)
-   * [Account](#vitual_functions_in_account)
-   * [Checking](#vitual_functions_in_checking)
-   * [Saving](#vitual_functions_in_saving)
-4. [Summary](#summary)
+4. [Virtual Functions](#virtual_functions)
+   * [Virtual Functions in Account](#virtual_functions_in_account)
+   * [Virtual Functions in Checking](#virtual_functions_in_checking)
+   * [Virtual Functions in Saving](#virtual_functions_in_saving)
+5. [Other Functions](other_functions)
+   * [Other Functions in Checking](#other_functions_in_checking)
+6. [Sample Run](sample_run)
+7. [Summary](#summary)
 
 ## Overview
 
@@ -92,7 +95,6 @@ public:
 };
 ```
 
-
 ## Static Functions
 ### Static Functions in Account 
 -   static void display_menu();
@@ -151,31 +153,33 @@ Some of member functions are inheritance and virtual functions.
 ```
 -   void deposit(double deposit_amount) override {...}
 
+## Other Functions
+### Other Functions in Checking
+-   void write_check(double check_amount);
+```
+    void write_check(double check_amount) {
+        if (balance < check_amount){
+            balance -= 15.00;   // bounced check fee $15
+            set_check_bounced(1);
+            cout << "\nAn error occured: check bounced (not enough funds).\n";
+            cout << "\nA fee of $15 has been charged for bounced check.\n";
+        }
+        else if (get_check_count() == 0 && balance >= check_amount){
+            balance -= check_amount;
+        }
 
+        else if (get_check_count() > 0 && balance >= check_amount + 0.10){
+            balance -= (check_amount + 0.10);    // check fee $0.1
+            cout << "\nA fee of $0.10 has been charged for writing a check.\n";
+        }
+        set_check_count(1);
+        cout << "Deducted successfully from Checking!\n";
+        cout << "You have written " << get_check_count() << "check(s).\n";
+        cout << "Checking balance: $" << balance << endl;
+    }
+```
 
-
-Each employee has the following attributes:
-- ID (integer and unique)
-- full name 
-    -  first name 
-    -  last name
-- SSN(last 4 digits)
-- wage
-- department- 
-- date of hire 
-    - hire year
-    - hire month
-    - hire day
-
-![PA15_list_of_employees_RUN_11.png](https://github.com/CelineWW/List_of_Employees/blob/main/PA15_list_of_employees_RUN_11.png)
-
-
-### Data Validation
-
-
-
-
-### Sample Run
+## Sample Run
 ![01.png](https://github.com/CelineWW/CPP_Programming/blob/main/PA13_banking/PA13_banking_Run/01.png)
 ![02.png](https://github.com/CelineWW/CPP_Programming/blob/main/PA13_banking/PA13_banking_Run/02.png)
 ![03.png](https://github.com/CelineWW/CPP_Programming/blob/main/PA13_banking/PA13_banking_Run/03.png)
@@ -189,8 +193,7 @@ Each employee has the following attributes:
 
 
 ## Summary
-1. This program can easily add, search, edit, delete employee attributes in the list from the external files. However, some details need to be added for advanced usage of the program.
-2. Maximum ID currently set as 99. If larger population added, ID has to accept 3 or 4 digit numbers.
-3. Hire date accept any number between 1 ~ 31 for any combination of year, month, and day. Day of month (Lunar month - 30 days, Solar month - 31 days, Feburay - 28/29 days) and leap year is not verified. 
-4. If the user attend to search employee, they can only search by employee ID. If ID is unknown, they have to display employee list first. This is not friendly to large dataset. Adding more searchin critiria (such as, employee name, hire date) can power up the program.
+1. When customer register their information. There is a checking account and a saving account created automatically. To improve the program, we can add more checking account and saving account objects for the user. 
+2. Credit account can be the third kind of parallel account.
+3. Interest is caculated once this option is chosen from the menu. The most closest occasion to real banking should import time to automatically update the interest on the background.
 
